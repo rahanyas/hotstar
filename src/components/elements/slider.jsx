@@ -11,7 +11,6 @@
 
 //   const API_KEY = import.meta.env.VITE_API_KEY;
 //   const POPULAR_MOVIES_URL = "https://api.themoviedb.org/3/movie/popular";
-
 //   useEffect(() => {
 //     const fetchVideos = async () => {
 //       try {
@@ -102,14 +101,22 @@
 // export default VideoSlider;
 
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import movieFetch from "./movieFetch";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
 
 function Slider() {
+  const [movieList, setMovieList] = useState([]);
+  const elementRef = useRef(null);
+
+  const screenWidth = window.innerWidth
+
   const getTrendingVideos = () => {
     movieFetch.getTrendingVideos
       .then((res) => {
-        // console.log(res.data); // Access the response data
+        console.log(res.data.results)
+           setMovieList(res.data.results)
       })
       .catch((error) => {
         console.error("Error fetching trending videos:", error);
@@ -120,7 +127,43 @@ function Slider() {
     getTrendingVideos();
   }, []);
 
-  return <div>Slider</div>;
+  const sliderRight = (ele) => {
+    if (ele) {
+      ele.scrollLeft += screenWidth - 100
+    }
+  };
+
+  const sliderLeft = (ele) => {
+    if (ele) {
+      ele.scrollLeft -= screenWidth - 90
+    }
+  };
+
+  return (
+    <div>
+
+<HiChevronLeft
+  className="hidden md:block text-white text-[30px] absolute left-1/2 transform -translate-x-[120%] bottom-4 cursor-pointer"
+  onClick={() => sliderLeft(elementRef.current)}
+/>
+
+
+<HiChevronRight
+  className="hidden md:block text-white text-[30px] absolute left-1/2 transform translate-x-[120%] bottom-4 cursor-pointer"
+  onClick={() => sliderRight(elementRef.current)}
+/>
+
+    <div className="flex overflow-x-auto w-full px-16 py-4 scrollbar-none scroll-smooth" ref={elementRef}>
+      {movieList.map((item, index) => (
+        <img src={IMAGE_BASE_URL+item.backdrop_path} alt="img backdrop" 
+        className='min-w-full md:h-[310px] object-cover object-left-top mr-4 rounded-md'
+        key={index}
+        />
+      ))}
+    </div>
+    
+    </div>
+  )
 }
 
 export default Slider;

@@ -4,7 +4,7 @@ function Layout(){
   return(
     <div className="relative">
        <Sidebar />
-       <div style={{ padding: "20px", position: "relative", zIndex: 0 }}>
+       <div  className="relative z-0">
         <Outlet />
       </div>
     </div>
